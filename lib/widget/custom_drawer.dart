@@ -10,6 +10,24 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
-    return Drawer();
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Colors.deepPurple),
+            child: Text('메뉴'),
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('홈'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          // 다른 메뉴들 추가
+        ],
+      ),
+    );
   }
 }

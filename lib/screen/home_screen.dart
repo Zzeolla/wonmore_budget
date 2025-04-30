@@ -4,6 +4,7 @@ import 'package:wonmore_budget/widget/bottom_sheet_widget.dart';
 import 'package:wonmore_budget/widget/calendar_widget.dart';
 import 'package:wonmore_budget/widget/common_app_bar.dart';
 import 'package:wonmore_budget/widget/custom_drawer.dart';
+import 'package:wonmore_budget/widget/record_input_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -159,140 +160,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     _showBottomSheet(context, selectedDay, rowHeight);
                   },
+                  onPageChanged: (focusedDay) {
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  },
                 ),
-                // child: TableCalendar(
-                //   locale: 'ko_KR',
-                //   focusedDay: _focusedDay,
-                //   firstDay: DateTime.utc(2020, 1, 1),
-                //   lastDay: DateTime.utc(2030, 12, 31),
-                //   headerVisible: false,
-                //   sixWeekMonthsEnforced: true,
-                //   daysOfWeekHeight: 32,
-                //   daysOfWeekStyle: DaysOfWeekStyle(
-                //     weekdayStyle: TextStyle(
-                //         color: Colors.black87,
-                //         fontSize: 16,
-                //         fontWeight: FontWeight.bold), // 평일 기본 스타일
-                //   ),
-                //   rowHeight: rowHeight,
-                //   calendarBuilders: CalendarBuilders(
-                //     dowBuilder: (context, day) {
-                //       // 요일 인덱스 0 = 일요일, 6 = 토요일
-                //       if (day.weekday == DateTime.sunday) {
-                //         return Center(
-                //           child: Text(
-                //             '일',
-                //             style: TextStyle(
-                //                 color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
-                //           ),
-                //         );
-                //       } else if (day.weekday == DateTime.saturday) {
-                //         return Center(
-                //           child: Text(
-                //             '토',
-                //             style: TextStyle(
-                //                 color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),
-                //           ),
-                //         );
-                //       } else {
-                //         return Center(
-                //           child: Text(
-                //             _weekdayString(day.weekday), // 아래 함수로 요일 표시
-                //             style: TextStyle(color: Colors.black87, fontSize: 16),
-                //           ),
-                //         );
-                //       }
-                //     },
-                //     defaultBuilder: (context, day, focusedDay) {
-                //       return Container(
-                //         margin: const EdgeInsets.all(4), // 셀 간격 약간 띄우기
-                //         decoration: BoxDecoration(
-                //           color: Colors.grey.shade100, // 흐릿한 회색 배경 (border 없이 깔끔)
-                //           borderRadius: BorderRadius.circular(8),
-                //         ),
-                //         alignment: Alignment.topCenter,
-                //         child: Padding(
-                //           padding: const EdgeInsets.only(top: 6.0),
-                //           child: Text(
-                //             '${day.day}',
-                //             style: TextStyle(fontSize: 14, color: Colors.black87),
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //     todayBuilder: (context, day, focusedDay) {
-                //       return Container(
-                //         margin: EdgeInsets.all(4),
-                //         decoration: BoxDecoration(
-                //           color: Colors.amberAccent.withOpacity(0.5),
-                //           borderRadius: BorderRadius.circular(8),
-                //         ),
-                //         alignment: Alignment.topCenter,
-                //         child: Padding(
-                //           padding: const EdgeInsets.only(top: 6.0),
-                //           child: Text(
-                //             '${day.day}',
-                //             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //     selectedBuilder: (context, day, focusedDay) {
-                //       return Container(
-                //         margin: EdgeInsets.all(4),
-                //         decoration: BoxDecoration(
-                //           border: Border.all(color: Colors.amber, width: 2), // 테두리 강조
-                //           borderRadius: BorderRadius.circular(8),
-                //           color: Colors.transparent,
-                //         ),
-                //         alignment: Alignment.topCenter,
-                //         child: Padding(
-                //           padding: const EdgeInsets.only(top: 6.0),
-                //           child: Text(
-                //             '${day.day}',
-                //             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //     outsideBuilder: (context, day, focusedDay) {
-                //       // 이번 달 아닌 날짜 처리
-                //       return Container(
-                //         margin: const EdgeInsets.all(4),
-                //         alignment: Alignment.topCenter,
-                //         child: Padding(
-                //           padding: const EdgeInsets.only(top: 6.0),
-                //           child: Text(
-                //             '${day.day}',
-                //             style: TextStyle(fontSize: 14, color: Colors.grey), // 흐릿한 색
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //   ),
-                //   selectedDayPredicate: (day) {
-                //     return isSameDay(_selectedDay, day);
-                //   },
-                //   onDaySelected: (selectedDay, focusedDay) {
-                //     setState(() {
-                //       _selectedDay = selectedDay;
-                //       _focusedDay = focusedDay;
-                //     });
-                //
-                //     _showBottomSheet(context, selectedDay);
-                //   },
-                //   onPageChanged: (_focusedDay) {
-                //     setState(() {
-                //       _focusedDay = _focusedDay;
-                //     });
-                //   },
-                //   calendarStyle: CalendarStyle(
-                //     selectedDecoration: BoxDecoration(
-                //       color: Colors.deepPurpleAccent,
-                //       shape: BoxShape.circle,
-                //     ),
-                //   ),
-                // ),
               ),
 
               /// 광고 추가
@@ -308,20 +181,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
           /// FAB 추가하여 일정 추가 버튼 생성
           Positioned(
-              right: 16,
-              bottom: realAdHeight + 16,
-              child: FloatingActionButton(
-                onPressed: () {
-                  // 버튼 눌렀을 때 실행할 코드
-                },
-                backgroundColor: Color(0xFFA79BFF),
-                shape: const CircleBorder(),
-                child: Icon(
-                  Icons.add, // + 아이콘
-                  color: Colors.white, // 아이콘 색
-                  size: 36, // 아이콘 크기 (기본 24)
-                ),
-              ))
+            right: 16,
+            bottom: realAdHeight + 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                final now = DateTime.now();
+                showDialog(
+                  context: context,
+                  builder: (_) => RecordInputDialog(initialDate: now),
+                );
+              },
+              backgroundColor: Color(0xFFA79BFF),
+              shape: const CircleBorder(),
+              child: Icon(
+                Icons.add, // + 아이콘
+                color: Colors.white, // 아이콘 색
+                size: 36, // 아이콘 크기 (기본 24)
+              ),
+            ),
+          ),
         ],
       ),
     );

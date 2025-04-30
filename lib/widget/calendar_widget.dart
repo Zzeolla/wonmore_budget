@@ -6,6 +6,7 @@ class CalendarWidget extends StatefulWidget {
   final DateTime? selectedDay;
   final double rowHeight;
   final void Function(DateTime selectedDay, DateTime focusedDay) onDaySelected;
+  final void Function(DateTime)? onPageChanged;
 
   const CalendarWidget({
     super.key,
@@ -13,6 +14,7 @@ class CalendarWidget extends StatefulWidget {
     required this.selectedDay,
     required this.rowHeight,
     required this.onDaySelected,
+    this.onPageChanged
   });
 
   @override
@@ -33,7 +35,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       rowHeight: widget.rowHeight,
       selectedDayPredicate: (day) => isSameDay(widget.selectedDay, day),
       onDaySelected: widget.onDaySelected,
-      onPageChanged: (_) {},
+      onPageChanged: (focusedDay) {
+        if (widget.onPageChanged != null) {
+          widget.onPageChanged!(focusedDay);
+        }
+      },
       daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
       ),

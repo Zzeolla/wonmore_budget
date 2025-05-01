@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:wonmore_budget/widget/bottom_sheet_widget.dart';
 import 'package:wonmore_budget/widget/calendar_widget.dart';
 import 'package:wonmore_budget/widget/common_app_bar.dart';
@@ -77,9 +78,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: _onLeftArrow,
                         icon: Icon(Icons.chevron_left),
                       ),
-                      Text(
-                        _yearMonthText,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      GestureDetector(
+                        onTap: () async {
+                          final pickedDate = await showMonthPicker(
+                            context: context,
+                            initialDate: _focusedDay,
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (pickedDate != null) {
+                            setState(() {
+                              _focusedDay = pickedDate;
+                            });
+                          }
+                        },
+                        child: Text(
+                          _yearMonthText,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       IconButton(
                         onPressed: _onRightArrow,
@@ -101,46 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('수입',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xFF7C7C7C),
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(height: 2),
-                          Text('+600,000',
-                              style: TextStyle(color: Color(0xFF5C57FE), fontSize: 16)),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('지출',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xFF7C7C7C),
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(height: 2),
-                          Text('-600,000', style: TextStyle(color: Colors.red, fontSize: 16)),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('잔액',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xFF7C7C7C),
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(height: 2),
-                          Text('W600,000', style: TextStyle(fontSize: 16)),
-                        ],
-                      ),
+                      Expanded(child: _buildSummaryItem('수입', 800000, '+')),
+                      Expanded(child: _buildSummaryItem('지출', 600000, '-')),
+                      Expanded(child: _buildSummaryItem('잔액', 200000)),
                     ],
                   ),
                 ),
@@ -217,21 +197,36 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  String _weekdayString(int weekday) {
-    switch (weekday) {
-      case DateTime.monday:
-        return '월';
-      case DateTime.tuesday:
-        return '화';
-      case DateTime.wednesday:
-        return '수';
-      case DateTime.thursday:
-        return '목';
-      case DateTime.friday:
-        return '금';
-      default:
-        return '';
-    }
+  Widget _buildSummaryItem(String label, int amount, [String prefix = '\\']) {
+    final formattedAmount = NumberFormat('#,###').format(amount);
+    final displayAmount = '$prefix$formattedAmount';
+    final Color amountColor = switch (prefix) {
+      '+' => Color(0xFF6A50FF),
+      '-' => Colors.red,
+      _ => Colors.black,
+    };
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style:
+              const TextStyle(fontSize: 20, color: Color(0xFF7C7C7C), fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          displayAmount,
+          style: TextStyle(
+            fontSize: 16,
+            color: amountColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+        ),
+      ],
+    );
   }
 
   void _showBottomSheet(BuildContext context, DateTime selectedDay, double rowHeight) {

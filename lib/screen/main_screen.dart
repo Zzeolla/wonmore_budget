@@ -3,7 +3,6 @@ import 'package:wonmore_budget/screen/analysis_screen.dart';
 import 'package:wonmore_budget/screen/home_screen.dart';
 import 'package:wonmore_budget/screen/my_info_screen.dart';
 import 'package:wonmore_budget/screen/my_wallet_screen.dart';
-import 'package:wonmore_budget/widget/common_app_bar.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

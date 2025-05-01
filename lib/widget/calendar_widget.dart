@@ -27,8 +27,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     return TableCalendar(
       locale: 'ko_KR',
       focusedDay: widget.focusedDay,
-      firstDay: DateTime.utc(2020, 1, 1),
-      lastDay: DateTime.utc(2030, 12, 31),
+      firstDay: DateTime.utc(1900, 1, 1),
+      lastDay: DateTime.utc(2100, 12, 31),
       headerVisible: false,
       sixWeekMonthsEnforced: true,
       daysOfWeekHeight: 32,
